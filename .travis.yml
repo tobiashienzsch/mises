@@ -1,0 +1,27 @@
+branches:
+  only:
+    - master
+
+language: go
+
+script-anchors:
+  - &script-linux-coverage
+    - cd $TRAVIS_BUILD_DIR
+    - go get ./...
+    - go test -race -coverprofile coverage.out ./...
+    - bash <(curl -s https://codecov.io/bash)
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      go:
+        - 1.13.x
+      git:
+        depth: 3
+      env:
+        - MATRIX_EVAL="GO111MODULE=on"
+      script: *script-linux-coverage
+
+before_install:
+  - eval "${MATRIX_EVAL}"
